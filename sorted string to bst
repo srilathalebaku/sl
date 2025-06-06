@@ -1,0 +1,88 @@
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    
+    TreeNode() {}
+    
+    TreeNode(int val) {
+        this.val = val;
+    }
+    
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+
+public class Main {
+    
+    public TreeNode sortedArrayToBST(int[] nums) {
+        if (nums.length == 0) return null;
+        return getBst(nums, 0, nums.length - 1);
+    }
+
+    public static TreeNode getBst(int[] arr, int startIdx, int endIdx) {
+        if (startIdx > endIdx) return null;
+
+        int mid = (startIdx + endIdx) / 2;
+        TreeNode bst = new TreeNode(arr[mid]);
+        bst.left = getBst(arr, startIdx, mid - 1);
+        bst.right = getBst(arr, mid + 1, endIdx);
+
+        return bst;
+    }
+
+    public static List<Integer> levelOrder(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+
+        while (!q.isEmpty()) {
+            TreeNode node = q.poll();
+            if (node != null) {
+                res.add(node.val);
+                q.offer(node.left);
+                q.offer(node.right);
+            } else {
+                res.add(null);
+            }
+        }
+
+        // Remove trailing nulls for cleaner output
+        int i = res.size() - 1;
+        while (i >= 0 && res.get(i) == null) {
+            res.remove(i);
+            i--;
+        }
+
+        return res;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter sorted integers separated by spaces:");
+
+        // Read the entire line and split by spaces
+        String line = sc.nextLine();
+        String[] parts = line.trim().split("\\s+");
+
+        int[] nums = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            nums[i] = Integer.parseInt(parts[i]);
+        }
+
+        Main solution = new Main();
+        TreeNode root = solution.sortedArrayToBST(nums);
+
+        List<Integer> levelOrderResult = levelOrder(root);
+        System.out.println(levelOrderResult);
+
+        sc.close();
+    }
+}
